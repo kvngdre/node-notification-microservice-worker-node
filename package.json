@@ -3,7 +3,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "build": "rimraf ./dist && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+    "dev": "nodemon -r tsconfig-paths/register src/startup.ts",
+    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
+    "lint": "eslint --ext .ts,.js .",
+    "start": "node dist/src/startup.js",
     "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "prepare": "husky install"
   },
   "keywords": [
@@ -12,7 +19,7 @@
     "SMS",
     "Push notification"
   ],
-  "author": "",
+  "author": "John Kennedy Kalu",
   "license": "ISC",
   "description": "",
   "devDependencies": {
