@@ -1,4 +1,4 @@
-export class EmailChannel {
+export class EmailNotification {
   constructor(
     public readonly alias: string,
     public readonly from: string,
