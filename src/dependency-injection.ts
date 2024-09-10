@@ -11,7 +11,7 @@ import { Logger } from "@infrastructure/logging/logger";
 import { NotificationWorker } from "@infrastructure/workers/notification-worker";
 import { IWorker } from "@abstractions/worker";
 
-export function registerServices() {
+export async function registerServices() {
   container.registerSingleton<INotificationStrategy<IEmailNotificationData>>(EmailStrategy);
   container.registerSingleton<INotificationStrategy<IPushNotificationData>>(PushStrategy);
   container.registerSingleton<INotificationStrategy<ISMSNotificationData>>(SMSStrategy);

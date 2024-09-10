@@ -4,7 +4,11 @@ import { container } from "tsyringe";
 import { NotificationWorker } from "@infrastructure/workers/notification-worker";
 import { registerServices } from "./dependency-injection";
 
-registerServices();
+async function startUp() {
+  await registerServices();
 
-const notificationWorker = container.resolve(NotificationWorker);
-notificationWorker.execute();
+  const notificationWorker = container.resolve(NotificationWorker);
+  await notificationWorker.execute();
+}
+
+startUp();
