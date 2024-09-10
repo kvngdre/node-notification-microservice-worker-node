@@ -1,17 +1,17 @@
-import { inject, injectable } from "tsyringe";
+import { inject, singleton } from "tsyringe";
 import { createTransport } from "nodemailer";
 import Mail from "nodemailer/lib/mailer";
 import { SentMessageInfo } from "nodemailer/lib/smtp-transport";
 import { INotificationStrategy } from "@domain/interfaces/notification-strategy-interface";
 import { ILogger } from "@application/abstractions/logging";
-import { IEmailNotification, INotificationResult } from "@domain/interfaces";
+import { IEmailNotificationData, INotificationResult } from "@domain/interfaces";
 
-@injectable()
-export class EmailStrategy implements INotificationStrategy<IEmailNotification> {
+@singleton()
+export class EmailStrategy implements INotificationStrategy<IEmailNotificationData> {
   private readonly _transport;
-  private readonly _emailUser = process.env.MAILGUN_USERNAME;
-  private readonly _emailPassword = process.env.MAILGUN_PASSWORD;
-  private readonly _emailHost = process.env.MAILGUN_HOST;
+  private readonly _emailUser = process.env.EMAIL_USERNAME;
+  private readonly _emailPassword = process.env.EMAIL_PASSWORD;
+  private readonly _emailHost = process.env.EMAIL_HOST;
 
   constructor(@inject("Logger") private readonly _logger: ILogger) {
     this._transport = createTransport({
@@ -25,19 +25,19 @@ export class EmailStrategy implements INotificationStrategy<IEmailNotification> 
     });
   }
 
-  public async send(notification: IEmailNotification): Promise<INotificationResult> {
+  public async send(data: IEmailNotificationData): Promise<INotificationResult> {
     const mailOptions: Mail.Options = {
-      from: `${notification.data.alias}<no-reply@pulse-core.xyz>`,
-      to: notification.data.to,
-      subject: notification.data.subject,
-      html: notification.data.body
+      from: `${data.alias}<no-reply@pulse-core.xyz>`,
+      to: data.to,
+      subject: data.subject,
+      html: data.body
     };
 
     try {
       const result: MailerResponseType = (await this._transport.sendMail(mailOptions)) as MailerResponseType;
       console.log(result);
 
-      const isAccepted = this._isMailAccepted(result, notification.data.to);
+      const isAccepted = this._isMailAccepted(result, data.to);
 
       return {
         messageId: result.messageId,

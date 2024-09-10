@@ -4,7 +4,7 @@ import { INotificationStrategy } from "@domain/interfaces/notification-strategy-
 import { NotificationType } from "@domain/types/notification-type";
 import { Logger } from "@infrastructure/logging/logger";
 import { NotificationChannel } from "@domain/enums";
-import { EmailStrategy, PushStrategy, SMSStrategy } from "@domain/notification-strategies";
+import { EmailStrategy, PushStrategy, SMSStrategy } from "@application/notification-strategies";
 import { Environment } from "@infrastructure/utils";
 import { IWorker } from "@application/abstractions/worker/worker-interface";
 
@@ -65,7 +65,7 @@ export class NotificationWorker implements IWorker {
           const notification: NotificationType = JSON.parse(msg.content.toString());
 
           this._strategy = this._selectStrategy(notification);
-          const result = await this._strategy.send(notification);
+          const result = await this._strategy.send(notification.data);
 
           if (!result.success) {
             this._publishToDLQ(channel, msg);
