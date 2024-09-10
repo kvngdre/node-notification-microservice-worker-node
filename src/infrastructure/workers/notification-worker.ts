@@ -1,12 +1,12 @@
 import { injectable } from "tsyringe";
 import { Channel, Connection, ConsumeMessage, connect } from "amqplib";
-import { INotificationStrategy } from "@application/abstractions/interfaces/notification-strategy-interface";
-import { NotificationType } from "@application/abstractions/types/notification-type";
+import { INotificationStrategy } from "src/abstractions/interfaces/notification-strategy-interface";
+import { NotificationType } from "src/abstractions/types/notification-type";
 import { Logger } from "@infrastructure/logging/logger";
-import { NotificationChannel } from "@application/abstractions/enums";
-import { EmailStrategy, PushStrategy, SMSStrategy } from "@application/notification-strategies";
+import { NotificationChannel } from "src/abstractions/enums";
+import { EmailStrategy, PushStrategy, SMSStrategy } from "@infrastructure/notification-strategies";
 import { Environment } from "@infrastructure/utils";
-import { IWorker } from "@application/abstractions/worker/worker-interface";
+import { IWorker } from "src/abstractions/worker/worker-interface";
 
 @injectable()
 export class NotificationWorker implements IWorker {

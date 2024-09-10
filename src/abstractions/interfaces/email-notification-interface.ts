@@ -1,4 +1,4 @@
-import { NotificationChannel } from "@application/abstractions/enums/notification-channel-enum";
+import { NotificationChannel } from "src/abstractions/enums/notification-channel-enum";
 
 export interface IEmailNotification {
   channel: NotificationChannel.EMAIL;

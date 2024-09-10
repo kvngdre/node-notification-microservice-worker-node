@@ -1,8 +1,8 @@
 import winston, { transports, createLogger, format, addColors } from "winston";
 import { singleton } from "tsyringe";
 import "winston-daily-rotate-file";
-import { Environment } from "@shared-kernel/environment";
-import { ILogger } from "@application/abstractions/logging/logger-interface";
+import { ILogger } from "src/abstractions/logging/logger-interface";
+import { Environment } from "@infrastructure/utils/environment";
 
 @singleton()
 export class Logger implements ILogger {
@@ -28,10 +28,7 @@ export class Logger implements ILogger {
         format: format.combine(
           format.colorize(),
           format.splat(),
-          format.printf(
-            ({ level, message, metadata }) =>
-              `[${level}]: ${message} ${this.formatMetadata(metadata)}`
-          )
+          format.printf(({ level, message, metadata }) => `[${level}]: ${message} ${this._formatMetadata(metadata)}`)
         )
       })
     ];
@@ -48,11 +45,11 @@ export class Logger implements ILogger {
           format.align(),
           format.timestamp({ format: "HH:mm:ss A" }),
           format.printf(
-            ({ message, timestamp, metadata }) =>
-              `[${timestamp}]: ${message} ${this.formatMetadata(metadata)}`
+            ({ message, timestamp, metadata }) => `[${timestamp}]: ${message} ${this._formatMetadata(metadata)}`
           )
         )
       }),
+
       new transports.DailyRotateFile({
         filename: "combined %DATE%.log",
         dirname: "logs",
@@ -65,7 +62,7 @@ export class Logger implements ILogger {
           format.timestamp({ format: "HH:mm:ss A" }),
           format.printf(
             ({ level, message, timestamp, metadata }) =>
-              `[${level} ${timestamp}]: ${message} ${this.formatMetadata(metadata)}`
+              `[${level} ${timestamp}]: ${message} ${this._formatMetadata(metadata)}`
           )
         )
       })
@@ -100,7 +97,7 @@ export class Logger implements ILogger {
     this._logger.debug(message, { metadata });
   }
 
-  private formatMetadata(metadata: unknown) {
+  private _formatMetadata(metadata: unknown) {
     return !metadata ? "" : `| ${JSON.stringify(metadata, null, 2)}`;
   }
 }

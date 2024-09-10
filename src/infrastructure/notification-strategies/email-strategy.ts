@@ -2,9 +2,9 @@ import { inject, singleton } from "tsyringe";
 import { createTransport } from "nodemailer";
 import Mail from "nodemailer/lib/mailer";
 import { SentMessageInfo } from "nodemailer/lib/smtp-transport";
-import { INotificationStrategy } from "@application/abstractions/interfaces/notification-strategy-interface";
-import { ILogger } from "@application/abstractions/logging";
-import { IEmailNotificationData, INotificationResult } from "@application/abstractions/interfaces";
+import { INotificationStrategy } from "src/abstractions/interfaces/notification-strategy-interface";
+import { ILogger } from "src/abstractions/logging";
+import { IEmailNotificationData, INotificationResult } from "src/abstractions/interfaces";
 
 @singleton()
 export class EmailStrategy implements INotificationStrategy<IEmailNotificationData> {

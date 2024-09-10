@@ -1,9 +1,9 @@
 import { inject, singleton } from "tsyringe";
 import { initializeApp, cert, App } from "firebase-admin/app";
 import { getMessaging } from "firebase-admin/messaging";
-import { INotificationResult, IPushNotificationData } from "@application/abstractions/interfaces";
-import { INotificationStrategy } from "@application/abstractions/interfaces/notification-strategy-interface";
-import { ILogger } from "@application/abstractions/logging";
+import { INotificationResult, IPushNotificationData } from "src/abstractions/interfaces";
+import { INotificationStrategy } from "src/abstractions/interfaces/notification-strategy-interface";
+import { ILogger } from "src/abstractions/logging";
 
 @singleton()
 export class PushStrategy implements INotificationStrategy<IPushNotificationData> {
