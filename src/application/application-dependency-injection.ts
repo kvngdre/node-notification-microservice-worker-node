@@ -5,7 +5,7 @@ import {
   INotificationStrategy,
   IPushNotificationData,
   ISMSNotificationData
-} from "@domain/interfaces";
+} from "@application/abstractions/interfaces";
 
 export function registerApplicationServices() {
   container.registerSingleton<INotificationStrategy<IEmailNotificationData>>(EmailStrategy);

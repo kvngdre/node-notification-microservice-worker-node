@@ -1,5 +1,5 @@
-import { INotificationResult, ISMSNotificationData } from "@domain/interfaces";
-import { INotificationStrategy } from "@domain/interfaces/notification-strategy-interface";
+import { INotificationResult, ISMSNotificationData } from "@application/abstractions/interfaces";
+import { INotificationStrategy } from "@application/abstractions/interfaces/notification-strategy-interface";
 
 export class SMSStrategy implements INotificationStrategy<ISMSNotificationData> {
   constructor() {}

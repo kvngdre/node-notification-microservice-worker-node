@@ -1,4 +1,4 @@
-import { NotificationChannel } from "@domain/enums/notification-channel-enum";
+import { NotificationChannel } from "@application/abstractions/enums/notification-channel-enum";
 
 export interface ISMSNotification {
   channel: NotificationChannel.SMS;
