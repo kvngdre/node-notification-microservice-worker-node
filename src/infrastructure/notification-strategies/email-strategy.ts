@@ -35,7 +35,6 @@ export class EmailStrategy implements INotificationStrategy<IEmailNotificationDa
 
     try {
       const result: MailerResponseType = (await this._transport.sendMail(mailOptions)) as MailerResponseType;
-      console.log(result);
 
       const isAccepted = this._isMailAccepted(result, data.to);
 

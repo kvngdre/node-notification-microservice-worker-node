@@ -15,7 +15,7 @@ export class NotificationWorker implements IWorker {
   private readonly _exchangeName = process.env.RMQ_EXCHANGE_NAME || "notification_events";
   private readonly _exchangeType = process.env.RMQ_EXCHANGE_TYPE || "direct";
   private readonly _mainQueue = process.env.RMQ_MAIN_QUEUE_NAME || "send_notification_queue";
-  private readonly _dlqRoutingKey = process.env.RMQ_DLQ_ROUTING_KEY || "send_notification_dlq";
+  private readonly _dlqRoutingKey = process.env.RMQ_DLQ_ROUTING_KEY || "failed_notification";
   private readonly _dlq = process.env.RMQ_DLQ_NAME || "send_notification_dlq";
   private readonly _rmqHostname = process.env.RMQ_HOST || "localhost";
   private readonly _rmqPort = process.env.RMQ_PORT || 5672;
@@ -29,19 +29,6 @@ export class NotificationWorker implements IWorker {
 
   public setStrategy(strategy: INotificationStrategy<unknown>): void {
     this._strategy = strategy;
-  }
-
-  private async _getConnection() {
-    if (this._connection === null) {
-      this._connection = await connect({
-        hostname: this._rmqHostname,
-        port: Number(this._rmqPort) ?? 5672,
-        username: "guest",
-        password: "guest"
-      });
-    }
-
-    return this._connection;
   }
 
   public async execute() {
@@ -65,7 +52,7 @@ export class NotificationWorker implements IWorker {
           const notification: NotificationType = JSON.parse(msg.content.toString());
 
           this._strategy = this._selectStrategy(notification);
-          const result = await this._strategy.send(notification.data);
+          const result = await this._strategy.send(JSON.parse(notification.data as unknown as string));
 
           if (!result.success) {
             this._publishToDLQ(channel, msg);
@@ -86,11 +73,27 @@ export class NotificationWorker implements IWorker {
       { noAck: false }
     );
 
+    // To close the channel and connection.
     process.on("SIGTERM", async () => {
       this._logger.logInfo("Received SIGTERM! Notification worker shutting down gracefully.");
       await channel.close();
       await connection.close();
     });
+
+    this._logger.logDebug("Worker started!...");
+  }
+
+  private async _getConnection() {
+    if (this._connection === null) {
+      this._connection = await connect({
+        hostname: this._rmqHostname,
+        port: Number(this._rmqPort) ?? 5672,
+        username: "guest",
+        password: "guest"
+      });
+    }
+
+    return this._connection;
   }
 
   private async _setupQueues(channel: Channel) {
@@ -135,7 +138,9 @@ export class NotificationWorker implements IWorker {
         throw new Error("Unsupported notification channel");
     }
 
-    this._logger.logDebug(`Selected ${strategy} strategy for ${notification.channel} notification.`);
+    this._logger.logDebug(
+      `Selected ${Object.getPrototypeOf(strategy).constructor.name} for ${notification.channel} notification.`
+    );
 
     return strategy;
   }
